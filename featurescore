@@ -28,7 +28,9 @@ def feature_score(S, R, wd_P):
 
 # Sample feature function
 def q(d, P):
-    # Your implementation to extract feature values for the given routing path
+    # Implementation to extract feature values for the given routing path
+
+
     return ["NYe", "1sp"]
 
 # Sample set of path specifications
