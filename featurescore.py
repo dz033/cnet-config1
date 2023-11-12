@@ -1,7 +1,7 @@
 def feature_score(S, R, wd_P):
     """
     In Progress
-    
+
     Calculate the feature score for a given set of path specifications.
 
     Args:
