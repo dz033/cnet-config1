@@ -1,49 +1,51 @@
-def feature_score(S, R, wd_P):
+def feature_score(S, weights, feature_function):
     """
-    In Progress
+    Calculate the feature score for a set of specifications.
 
-    Calculate the feature score for a given set of path specifications.
-
-    Args:
+    Parameters:
     - S: Set of path specifications
-    - R: List of routing paths
-    - wd_P: Dictionary of weights for each routing path (key: (d, P), value: weight)
+    - weights: Dictionary mapping (d, P) to their respective weights
+    - feature_function: Function representing the feature function (e.g., E, SP)
 
     Returns:
-    - Feature score for the given set of path specifications
+    - Feature score for the given set of specifications
     """
     score = 0
 
-    for (d, P) in R:
+    for (d, P) in weights:
+        path_weight = weights[(d, P)]
         for spec_set in S:
-            if all(feature_value in spec_set for feature_value in q(d, P)):
-                # Calculate the score for the current path and add it to the total score
-                score += wd_P[(d, P)] * len(spec_set)
+            if feature_function(d, P) in spec_set:
+                score += path_weight * sum(
+                    1 for q in S if feature_function(d, P) in q and (d, P) in S
+                )
 
     return score
 
-# Example usage:
-# You need to define the feature function q(d, P) and set of path specifications S.
-# For simplicity, let's assume q(d, P) returns a list of feature values for the given (d, P).
 
-# Sample feature function
-def q(d, P):
-    # Implementation to extract feature values for the given routing path
+# Example feature functions (replace with actual feature functions)
+def E(d, P):
+    # Replace with your actual E feature function
+    return "NYe" if d == "d1" else "LAe"
 
 
-    return ["NYe", "1sp"]
+def SP(d, P):
+    # Replace with your actual SP feature function
+    return "1sp" if P == "P1" else "1sp"
 
-# Sample set of path specifications
-S = [{"NYe"}, {"LAe"}, {"1sp"}, {"NYe", "LAe", "1sp"}]
 
-# Sample routing paths
-R = [("d1", "P1"), ("d2", "P2")]
+# Example usage
+weights = {("d1", "P1"): 1, ("d2", "P2"): 2}
+S_E = [{"NYe"}]
+S_SP = [{"1sp"}]
+S_E_SP = [{"NYe"}, {"LAe", "1sp"}]
 
-# Sample weights
-wd_P = {("d1", "P1"): 1, ("d2", "P2"): 2}
+# Calculate feature scores
+score_E = feature_score(S_E, weights, E)
+score_SP = feature_score(S_SP, weights, SP)
+score_E_SP = feature_score(S_E_SP, weights, lambda d, P: E(d, P) + SP(d, P))
 
-# Calculate the feature score
-result = feature_score(S, R, wd_P)
-
-# Print the result
-print("Feature Score:", result)
+# Print the results
+print("Feature score for E:", score_E)
+print("Feature score for SP:", score_SP)
+print("Feature score for E and SP:", score_E_SP)
