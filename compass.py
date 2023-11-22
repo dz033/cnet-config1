@@ -22,6 +22,34 @@ line 10-13: while loop to find max specs of the feature selected
 
 do you need this equivalent path finder? seems like you would rarely find an equivalent path in the real world    
 """ 
+def compass(R, q1, q2, q3, q4, k, t): 
+    #R is a set of routing paths
+    #q1...ql is a set of feature functions
+    #k is the limit on the number of specifications
+    #t is the limit on the size of the specifications
+    Q = {q1, q2, q3, q4}
+    S = set() #specification set S
+    L = set() #last computed specification L
+    while len(S) < k:
+        q, v = argmax(feature_score())  #code this part
+        L.add(v)
+        Q.remove(q)
+        for path in R:
+            if not PathMeetsSpecification(path, v):
+                R.remove(path)
+        if len(L) == t:
+            S = S.add(L)
+            break
+        #if there is an equivalent path to L with an additional feature value, add it instead because it will be more explanatory with the same coverage
+        while True: #there exists v belonging to Uq, for which LU{v} == L... (path equivalent): 
+            L.add(v)
+            if len(L) == t:
+                S.add(L)
+                break
+            Q.remove(q) #q is the feature value that v belongs to 
+        S.add(L)
+
+    return S
 
 def Egress(p):
     return p.P[1] #simply returns egress from the NetworkPath of the RoutingPath
