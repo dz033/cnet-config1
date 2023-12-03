@@ -35,6 +35,7 @@ def compass(R, Q, V, k, t, feature_score, argmax):
     #q1...ql is a set of feature functions
     #k is the limit on the number of specifications
     #t is the limit on the size of the specifications
+    #V is the set of all feature values
     
     S = set() #specification set S
     L = set() #last computed specification L
