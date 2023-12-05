@@ -30,48 +30,65 @@ do you need this equivalent path finder? seems like you would rarely find an equ
 
 
 
-def compass(R, Q, V, k, t): 
+def compass(R1, Q, V, k, t): 
     #R is a set of routing paths
     #q1...ql is a set of feature functions
     #k is the limit on the number of specifications
     #t is the limit on the size of the specifications
     #V is the set of all feature values
-    
-    S = set() #specification set S
+    R = R1
+    S = [] #specification set S
     L = set() #last computed specification L
     while len(S) < k:
         q, v = argmax(R, V)  #if weight is traffic size, wehre do we get this data
-        L.add(v)
+        print(f"q is {q} and v is {v}")
+        L.add(FeatureValue(q,v))
+        print(f"Q is {Q} and q is {q}")
         Q.remove(q)
-        for value in V:
+        for value in reversed(V):
             if value.getType() == q:
+                #print(value.getType())
                 V.remove(value)
+                #print("removed")
         for path in R:
+            #print("checking paths in R")
             if not path.check(q, v):
+             #   print("removed")
                 R.remove(path)
+        #print(f"  R after removals: {len(R)}")
         if len(L) == t:
-            S = S.add(L)
+            S.append(L)
+            #L = set()
+            #R = R1
+            #print(len(L))
             break
-        print(f"L is {L}")
+        #print(f"L is {L}")
         #if there is an equivalent path to L with an additional feature value, add it instead because it will be more explanatory with the same coverage
         #while True: #there exists v belonging to Uq, for which LU{v} == L... (path equivalent): 
+        """
         for value in V:
-            if check_path_equivalence(L, L.add(value), R):
-                L = L.add(value)
+            L2 = L
+            L2.add(value)
+            if check_path_equivalence(L, L2, R):
+                print("PE!!!!!!!!!")
                 if len(L) == t:
-                    S = S.add(L)
+                    S = S.append(L)
                     break
-                Q.remove(value[0])
-        
+                Q.remove(value.getType())
+        """       
 
-        for path in L:
-            L.add(v)
-            if len(L) == t:
-                S.add(L)
-                break
-            Q.remove(q) #q is the feature value that v belongs to 
-        S.add(L)
-
+        #for path in L:
+        #    L.add(v)
+        #    if len(L) == t:
+        #        S.add(L)
+        #        break
+            #print(Q)
+            #print(q)
+            #Q.remove(q) #q is the feature value that v belongs to 
+        S.append(L)
+        #print(f"added {L}")
+        print(S)
+    print(S)
     return S
 
 def check_path_equivalence(L, S, R): #path equivalence is a property of path specifications
@@ -84,21 +101,11 @@ def check_path_equivalence(L, S, R): #path equivalence is a property of path spe
 
 def path_meets_specification(p, S):
     #for all feature values in S, the corresponding feature value in p is the same. 
-
-    
+    if S == None:
+        return True
     for feature_value in S:
-        if feature_value.getType() == 'I':
-            if not p.checkIngress(): #return false if ingress doesnt match
-                return False
-        elif feature_value.getType() == 'E':
-            if not p.checkEgress(): 
-                return False
-        elif feature_value.getType() == 'O':
-            if not p.checkOrganization(): 
-                return False
-        elif feature_value.getType() == 'SP': #use elif here because we may add more feature values
-            if not p.checkShortestPath(): 
-                return False
+        if not p.check(feature_value.getType(), feature_value.getValue()):
+            return False
     return True
 
 def path_meets_specification_set(p, SS):
@@ -167,13 +174,20 @@ def main():
     k = 4
     t = len(Q)
     """
-    R = generatePaths()[0:5000]
+    R = generatePaths()[1:-1:250]
     V = generateV(R)
-    print(V)
+    #print(V[0:50])
     Q = ["O", "I", "E", "SP"]
     k = 4
     t = len(Q)
+    print(f"R before removals: {len(R)}")
     S = compass(R, Q, V, k, t)
-    print(S)
+    SasString = []
+    for PS in S:
+        PSString = set()
+        for featureValue in PS:
+            PSString.add(str(featureValue))
+        SasString.append(PSString)
+    print(SasString)
 
 main()

@@ -28,12 +28,16 @@ class FeatureValue:
     def __init__(self, type, value):
         self.type = type
         self.value = value
+        self.tupleFormat = (type, value)
         #example: type is ingress(I). check feature value
     
     def getType(self):
         return self.type
     def getValue(self):
         return self.value
+    
+    def __str__(self):
+        return str(self.tupleFormat)
 class RoutingPath:
     def __init__(self, d, ingress, egress, path, shortestPath, bandwidth):
         self.d = d
@@ -142,7 +146,7 @@ def generateV(R):
         V.append(FeatureValue("O", value))
     for value in spList:
         V.append(FeatureValue("SP", value))
-    print(organizationList)
+    #print(organizationList)
     return V
     
 
@@ -165,8 +169,8 @@ def argmax(R, V):
         if v_score > max_score:
             max_score = v_score
             max_v = v
-            print(f"NEW KING: score {v_score} type {v.getType()} value {v.getValue()}")
-    print(F"FINAL KING: score {max_score} type {max_v.getType()} value {max_v.getValue()}")
+            #print(f"NEW KING: score {v_score} type {v.getType()} value {v.getValue()}")
+    #print(F"FINAL KING: score {max_score} type {max_v.getType()} value {max_v.getValue()}")
     return max_v.getType(), max_v.getValue()
 
 
@@ -175,14 +179,14 @@ def main():
     R = generatePaths()[0:-1:25]
     #R = generatePaths()#[0:15000]
     V = generateV(R)
-    print(R)
+    #print(R)
     sampleValue = FeatureValue("SP", False)
     score = feature_score(R, sampleValue)
     print(score)
     q, v = argmax(R, V)
     print(f"q is {q} and v is {v}")
-    print(len(V))
-    print(len(R))
+    #print(len(V))
+    #print(len(R))
     
     
     #print(node_n_to_location)
@@ -192,3 +196,5 @@ def main():
 #for node in nested_list:
 #    pathList = node[0].split(" -> ")
 main()
+#v = FeatureValue("I", "SLKC")
+#print(v)
