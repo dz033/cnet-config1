@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from path import RoutingPath, FeatureValue
+from path import RoutingPath, FeatureValue, argmax, feature_score, generatePaths, generateV
 from featurescore import feature_score
-from argmax import argmax
+
 
 """
 stuff to implement:
@@ -30,7 +30,7 @@ do you need this equivalent path finder? seems like you would rarely find an equ
 
 
 
-def compass(R, Q, V, k, t, feature_score, argmax): 
+def compass(R, Q, V, k, t): 
     #R is a set of routing paths
     #q1...ql is a set of feature functions
     #k is the limit on the number of specifications
@@ -40,18 +40,19 @@ def compass(R, Q, V, k, t, feature_score, argmax):
     S = set() #specification set S
     L = set() #last computed specification L
     while len(S) < k:
-        q, v = argmax(feature_score())  #if weight is traffic size, wehre do we get this data
+        q, v = argmax(R, V)  #if weight is traffic size, wehre do we get this data
         L.add(v)
         Q.remove(q)
         for value in V:
-            if value[0] == q:
-                V.remove(q)
+            if value.getType() == q:
+                V.remove(value)
         for path in R:
-            if not path_meets_specification(path, v):
+            if not path.check(q, v):
                 R.remove(path)
         if len(L) == t:
             S = S.add(L)
             break
+        print(f"L is {L}")
         #if there is an equivalent path to L with an additional feature value, add it instead because it will be more explanatory with the same coverage
         #while True: #there exists v belonging to Uq, for which LU{v} == L... (path equivalent): 
         for value in V:
@@ -106,6 +107,7 @@ def path_meets_specification_set(p, SS):
     return True
 
 def main():
+    """
     flows = pd.read_csv("flow-10-egress_10000.csv")
     #print(f"flows: {flows}")
     nested_list = flows.values.tolist() #path, org, ip, 
@@ -156,14 +158,22 @@ def main():
         "organization": organizationList,
         "shortest_path": spList
     }
-
-    S = compass(pathList, #R
-            featureValueDict.keys(), #Q
-            featureValueDict.items(), #V (not in the original paper, but added for path equivalence logic)
-            4,  #k
-            len(featureValueDict.keys()), #t
-            feature_score, 
-            argmax)
+    """
+    """
+    R = pathList
+    Q = featureValueDict.keys()
+    print(f"Q = {Q}")
+    V = featureValueDict.items() #(not in the original paper, but added for path equivalence logic)
+    k = 4
+    t = len(Q)
+    """
+    R = generatePaths()[0:5000]
+    V = generateV(R)
+    print(V)
+    Q = ["O", "I", "E", "SP"]
+    k = 4
+    t = len(Q)
+    S = compass(R, Q, V, k, t)
     print(S)
 
 main()

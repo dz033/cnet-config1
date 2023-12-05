@@ -132,7 +132,7 @@ def generateV(R):
             ingressList.append(P.getIngress())
         if P.getEgress() not in egressList:
             egressList.append(P.getEgress())
-        if P.getOrganization() not in ingressList:
+        if P.getOrganization() not in organizationList:
             organizationList.append(P.getOrganization())
     for value in ingressList:
         V.append(FeatureValue("I", value))
@@ -142,6 +142,7 @@ def generateV(R):
         V.append(FeatureValue("O", value))
     for value in spList:
         V.append(FeatureValue("SP", value))
+    print(organizationList)
     return V
     
 
@@ -171,8 +172,8 @@ def argmax(R, V):
 
 
 def main():
-    
-    R = generatePaths()[0:15000]
+    R = generatePaths()[0:-1:25]
+    #R = generatePaths()#[0:15000]
     V = generateV(R)
     print(R)
     sampleValue = FeatureValue("SP", False)
@@ -180,11 +181,14 @@ def main():
     print(score)
     q, v = argmax(R, V)
     print(f"q is {q} and v is {v}")
+    print(len(V))
+    print(len(R))
+    
     
     #print(node_n_to_location)
 #print(node_n_to_location)
-main()
+
 
 #for node in nested_list:
 #    pathList = node[0].split(" -> ")
-    
+main()
