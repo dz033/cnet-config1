@@ -1,8 +1,4 @@
-import pandas as pd
-import numpy as np
-from path import RoutingPath, FeatureValue, argmax, feature_score, generatePaths, generateV
-from featurescore import feature_score
-
+from path import FeatureValue, argmax, generatePaths, generateV
 
 """
 stuff to implement:
@@ -39,11 +35,13 @@ def compass(R1, Q, V, k, t):
     R = R1
     S = [] #specification set S
     L = set() #last computed specification L
+    #x = 0
     while len(S) < k:
+        
         q, v = argmax(R, V)  #if weight is traffic size, wehre do we get this data
-        print(f"q is {q} and v is {v}")
+        #print(f"q is {q} and v is {v}")
         L.add(FeatureValue(q,v))
-        print(f"Q is {Q} and q is {q}")
+        #print(f"Q is {Q} and q is {q}")
         Q.remove(q)
         for value in reversed(V):
             if value.getType() == q:
@@ -65,17 +63,17 @@ def compass(R1, Q, V, k, t):
         #print(f"L is {L}")
         #if there is an equivalent path to L with an additional feature value, add it instead because it will be more explanatory with the same coverage
         #while True: #there exists v belonging to Uq, for which LU{v} == L... (path equivalent): 
-        """
+        
         for value in V:
             L2 = L
             L2.add(value)
             if check_path_equivalence(L, L2, R):
-                print("PE!!!!!!!!!")
+                print(f"{L} and {L2} extending {value} PE!!!!!!!!!")
                 if len(L) == t:
-                    S = S.append(L)
+                    S.append(L.copy())
                     break
-                Q.remove(value.getType())
-        """       
+                #Q.remove(value.getType())
+                break
 
         #for path in L:
         #    L.add(v)
@@ -85,10 +83,13 @@ def compass(R1, Q, V, k, t):
             #print(Q)
             #print(q)
             #Q.remove(q) #q is the feature value that v belongs to 
-        S.append(L)
+        S.append(L.copy())
+        #print(f"end of run {x}")
+        #x +=1
+        #print(f"S is {S}")
         #print(f"added {L}")
-        print(S)
-    print(S)
+        
+    #print(S)
     return S
 
 def check_path_equivalence(L, S, R): #path equivalence is a property of path specifications
@@ -114,73 +115,13 @@ def path_meets_specification_set(p, SS):
     return True
 
 def main():
-    """
-    flows = pd.read_csv("flow-10-egress_10000.csv")
-    #print(f"flows: {flows}")
-    nested_list = flows.values.tolist() #path, org, ip, 
-    #print(nested_list) 
-
-
-
-
-    #print(flowList)
-    def generate_paths():
-        l = []
-        for node in nested_list:
-            destination = node[1]
-            ingress = node[0][0]
-            egress = node[0][-1]
-            path = node[0]
-            sp = False
-            bandwidth = node[3]
-            if node[4] == 'TRUE':
-                sp = True
-            
-            P = RoutingPath(destination, ingress, egress, path, sp, bandwidth)
-            #print(str(P))
-            l.append(P)
-        return l
-
-    pathList = generate_paths()
-    
-
-
-    #CREATING A LIST OF ALL FEATURE VALUES:
-    #WE ARE GENERATING THIS OURSELVES, BUT IN A REAL SCENARIO THESE VALUES SHOULD BE FIXED BASED ON THE NETWORK
-    ingressList = []
-    egressList = []
-    organizationList = []
-    spList = [True, False]
-    for path in pathList:
-        if path.getIngress() not in ingressList:
-            ingressList.append(path.getIngress())
-        if path.getEgress() not in egressList:
-            egressList.append(path.getEgress())
-        if path.getOrganization() not in ingressList:
-            organizationList.append(path.getOrganization())
-    
-    featureValueDict = {
-        "ingress": ingressList,
-        "egress": egressList,
-        "organization": organizationList,
-        "shortest_path": spList
-    }
-    """
-    """
-    R = pathList
-    Q = featureValueDict.keys()
-    print(f"Q = {Q}")
-    V = featureValueDict.items() #(not in the original paper, but added for path equivalence logic)
-    k = 4
-    t = len(Q)
-    """
-    R = generatePaths()[1:-1:250]
+    R = generatePaths()[0:-1:25]
     V = generateV(R)
     #print(V[0:50])
     Q = ["O", "I", "E", "SP"]
     k = 4
     t = len(Q)
-    print(f"R before removals: {len(R)}")
+    #print(f"R before removals: {len(R)}")
     S = compass(R, Q, V, k, t)
     SasString = []
     for PS in S:

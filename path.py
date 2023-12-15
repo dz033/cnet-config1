@@ -182,9 +182,9 @@ def main():
     #print(R)
     sampleValue = FeatureValue("SP", False)
     score = feature_score(R, sampleValue)
-    print(score)
+    #print(score)
     q, v = argmax(R, V)
-    print(f"q is {q} and v is {v}")
+    #print(f"q is {q} and v is {v}")
     #print(len(V))
     #print(len(R))
     
