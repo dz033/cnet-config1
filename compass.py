@@ -63,17 +63,17 @@ def compass(R1, Q, V, k, t):
         #print(f"L is {L}")
         #if there is an equivalent path to L with an additional feature value, add it instead because it will be more explanatory with the same coverage
         #while True: #there exists v belonging to Uq, for which LU{v} == L... (path equivalent): 
-        
+        """
         for value in V:
             L2 = L
             L2.add(value)
             if check_path_equivalence(L, L2, R):
-                print(f"{L} and {L2} extending {value} PE!!!!!!!!!")
+                print("PE!!!!!!!!!")
                 if len(L) == t:
-                    S.append(L.copy())
+                    S = S.append(L)
                     break
-                #Q.remove(value.getType())
-                break
+                Q.remove(value.getType())
+        """       
 
         #for path in L:
         #    L.add(v)
